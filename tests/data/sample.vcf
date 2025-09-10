@@ -1,0 +1,28 @@
+##fileformat=VCFv4.2
+##fileDate=20250910
+##phasing=partial
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##INFO=<ID=AC,Number=1,Type=Integer,Description="Allele Count">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	pop1_1	pop1_2	pop1_3	pop2_1	pop2_2	pop2_3
+chr1	139	.	T	C	119	PASS	AC=3;DP=453	GT:DP	0/1:49	./.:50	.|.:89	./.:88	0|0:90	1|1:87
+chr1	273	.	T	G	122	PASS	AC=3;DP=381	GT:DP	.|.:56	1/1:34	.|.:86	./.:90	1/0:32	0|0:83
+chr1	283	.	T	G	115	PASS	AC=6;DP=387	GT:DP	1|1:51	1/1:77	0|1:64	./.:55	1|0:44	./.:96
+chr1	330	.	T	A	98	PASS	AC=5;DP=446	GT:DP	1|1:91	0|0:90	.|.:34	0/1:83	0|1:67	1/0:81
+chr1	477	.	G	T	149	PASS	AC=6;DP=282	GT:DP	.|.:34	0|1:41	0|1:49	1/1:57	1|1:62	0|0:39
+chr1	542	.	G	T	135	PASS	AC=3;DP=423	GT:DP	1/0:88	0|0:80	./.:68	./.:45	0|1:80	0/1:62
+chr1	621	.	A	C	93	PASS	AC=4;DP=455	GT:DP	0|0:61	0|0:68	./.:69	0/1:84	0/1:87	1|1:86
+chr1	642	.	G	T	150	PASS	AC=5;DP=389	GT:DP	0|1:97	.|.:34	0/1:59	0|1:92	0/1:40	1|0:67
+chr1	853	.	G	A	158	PASS	AC=5;DP=294	GT:DP	1/0:39	1|1:49	.|.:39	0/1:48	./.:85	0/1:34
+chr1	890	.	T	C	224	PASS	AC=4;DP=431	GT:DP	1|0:84	1/0:80	0|0:34	0/1:97	./.:49	0/1:87
+chr2	597	.	A	G	63	PASS	AC=4;DP=331	GT:DP	0|1:51	1|0:30	0|0:55	1|0:94	1/0:48	.|.:53
+chr2	605	.	T	C	58	PASS	AC=6;DP=405	GT:DP	0/1:99	0/1:91	0/1:98	1/0:38	0/0:35	1/1:44
+chr2	644	.	G	C	236	PASS	AC=8;DP=426	GT:DP	1|1:95	./.:93	1|0:59	1/1:37	1|0:99	1|1:43
+chr2	704	.	A	C	159	PASS	AC=3;DP=483	GT:DP	0|0:94	0/0:79	0|0:98	1|1:76	.|.:90	1|0:46
+chr2	750	.	G	C	211	PASS	AC=5;DP=350	GT:DP	./.:76	1|1:36	0/0:49	0/1:74	.|.:79	1|1:36
+chr2	758	.	T	A	110	PASS	AC=3;DP=401	GT:DP	0/0:90	.|.:94	.|.:30	0|0:83	1|1:59	1/0:45
+chr2	821	.	T	A	202	PASS	AC=5;DP=429	GT:DP	0/1:87	1/0:95	0|1:43	1|1:80	0/0:75	.|.:49
+chr2	845	.	C	G	205	PASS	AC=3;DP=355	GT:DP	1|0:93	./.:98	./.:35	0/0:30	1|1:57	0/0:42
+chr2	951	.	C	G	69	PASS	AC=4;DP=437	GT:DP	./.:71	.|.:97	.|.:45	1/1:85	1/1:68	./.:71
+chr2	996	.	C	T	93	PASS	AC=6;DP=378	GT:DP	1|0:78	1/0:78	1/0:63	1/0:54	1|1:52	0|0:53
