@@ -1,5 +1,5 @@
 # README
 
-A helper package for VCF manipuration writen in python.
+A helper package for VCF manipulation written in python.
 
 ## Installation
