@@ -1,7 +1,7 @@
 import gzip
 import sys
 from pathlib import Path
-from statistics import mean, median
+from math import ceil
 
 
 GT2AC = {
@@ -22,66 +22,53 @@ def main(args):
     pop1_idx = extract_sample_index(args.vcf, pop1)
     pop2_idx = extract_sample_index(args.vcf, pop2)
 
-    hdr = ["CHROM", "from", "to", f"{args.stats}_daf"]
-    print("\t".join(hdr))
-
+    chrom2windows = {}  # chrom2windows[chrom] = {[0]: [number_of_SNPs, sum_of_daf], [1]: ...}
     handler = gzip.open if args.vcf.lower().endswith(".gz") else open
     with handler(args.vcf, "rt") as f:
-        snp_num = 0
         tmp_chrom = ""
-        pos_in_window = []
-        daf_in_window = []
         for line in f:
             if line.startswith("#"):
                 continue
             else:
                 fields = line.rstrip("\n").split("\t")
                 chrom, pos = fields[0], fields[1]
-                if args.chrom:
-                    if chrom == args.chrom:
-                        pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
-                        pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
-                        if (pop1_daf is not None) and (pop2_daf is not None):
-                            snp_num += 1
-                            pos_in_window.append(pos)
-                            daf_in_window.append(abs(pop1_daf - pop2_daf))
-                            if snp_num >= args.window_size:
-                                window_daf = median(daf_in_window) if args.stats == "median" else mean(daf_in_window)
-                                print("\t".join([chrom, pos_in_window[0], pos_in_window[-1], f"{window_daf:.6f}"]))
-                                snp_num = 0
-                                pos_in_window.clear()
-                                daf_in_window.clear()
-                    else:
-                        continue
+                if chrom != tmp_chrom:
+                    tmp_chrom = chrom
+                    print(f"\tAnalyzing {tmp_chrom}", file=sys.stderr)
+                    chrom2windows[tmp_chrom] = {}
+                    first_idx = ceil((int(pos) - args.window_size) / args.window_step)
+                    last_idx = ceil(int(pos) / args.window_step)
+                    pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
+                    pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
+                    if (pop1_daf is not None) and (pop2_daf is not None):
+                        for i in range(first_idx, last_idx):
+                            if i not in chrom2windows[tmp_chrom].keys():
+                                chrom2windows[tmp_chrom][i] = [0, 0]  # [number of SNPs, sum of daf]
+                            chrom2windows[tmp_chrom][i][0] += 1
+                            chrom2windows[tmp_chrom][i][1] += abs(pop1_daf - pop2_daf)
                 else:
-                    if chrom != tmp_chrom:
-                        tmp_chrom = chrom
-                        print(f"\tAnalyzing {tmp_chrom}", file=sys.stderr)
-                        snp_num = 0
-                        pos_in_window.clear()
-                        daf_in_window.clear()
+                    first_idx = ceil((int(pos) - args.window_size) / args.window_step)
+                    last_idx = ceil(int(pos) / args.window_step)
+                    pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
+                    pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
+                    if (pop1_daf is not None) and (pop2_daf is not None):
+                        for i in range(first_idx, last_idx):
+                            if i not in chrom2windows[tmp_chrom].keys():
+                                chrom2windows[tmp_chrom][i] = [0, 0]  # [number of SNPs, sum of daf]
+                            chrom2windows[tmp_chrom][i][0] += 1
+                            chrom2windows[tmp_chrom][i][1] += abs(pop1_daf - pop2_daf)
 
-                        pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
-                        pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
-                        if (pop1_daf is not None) and (pop2_daf is not None):
-                            snp_num += 1
-                            pos_in_window.append(pos)
-                            daf_in_window.append(abs(pop1_daf - pop2_daf))
-                            #daf_in_window.append(pop1_daf)
-                    else:
-                        pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
-                        pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
-                        if (pop1_daf is not None) and (pop2_daf is not None):
-                            snp_num += 1
-                            pos_in_window.append(pos)
-                            daf_in_window.append(abs(pop1_daf - pop2_daf))
-                            #daf_in_window.append(pop1_daf)
-                            if snp_num >= args.window_size:
-                                window_daf = median(daf_in_window) if args.stats == "median" else mean(daf_in_window)
-                                print("\t".join([chrom, pos_in_window[0], pos_in_window[-1], f"{window_daf:.6f}"]))
-                                snp_num = 0
-                                pos_in_window.clear()
-                                daf_in_window.clear()
+    outfile = args.out + ".windowed.daf"
+    with open(outfile, "w") as f:
+        hdr = ["CHROM", "BIN_START", "BIN_END", "N_VARIANTS", "MEAN_DAF"]
+        f.write("\t".join(hdr)+"\n")
+        for chr in chrom2windows:
+            for idx,win in chrom2windows[chr].items():
+                bin_start = args.window_step * int(idx) + 1
+                bin_end = bin_start + args.window_size - 1
+                n_variants = win[0]
+                mean_daf = f"{win[1]/win[0]:.3f}"
+                f.write("\t".join([chr, str(bin_start), str(bin_end), str(n_variants), str(mean_daf)])+"\n")
 
 
 def get_samples_from_file(file: Path) -> list:
