@@ -33,31 +33,18 @@ def main(args):
             else:
                 fields = line.rstrip("\n").split("\t")
                 chrom, pos = fields[0], fields[1]
-                if args.chrom:
-                    if chrom == args.chrom:
-                        pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
-                        pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
-                        if (pop1_daf is not None) and (pop2_daf is not None):
-                            delta_allele_freqency = pop1_daf - pop2_daf
-                            if delta_allele_freqency >= args.extract_daf:
-                                print("\t".join([chrom, pos, f"{delta_allele_freqency:.6f}"]))
-                            else:
-                                continue
-                    else:
-                        continue
+                if chrom != tmp_chrom:
+                    tmp_chrom = chrom
+                    print(f"\tAnalyzing {tmp_chrom}", file=sys.stderr)
                 else:
-                    if chrom != tmp_chrom:
-                        tmp_chrom = chrom
-                        print(f"\tAnalyzing {tmp_chrom}", file=sys.stderr)
-                    else:
-                        pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
-                        pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
-                        if (pop1_daf is not None) and (pop2_daf is not None):
-                            delta_allele_freqency = pop1_daf - pop2_daf
-                            if delta_allele_freqency >= args.extract_daf:
-                                print("\t".join([chrom, pos, f"{delta_allele_freqency:.6f}"]))
-                            else:
-                                continue
+                    pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
+                    pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
+                    if (pop1_daf is not None) and (pop2_daf is not None):
+                        delta_allele_freqency = pop1_daf - pop2_daf
+                        if delta_allele_freqency >= args.extract_daf:
+                            print("\t".join([chrom, pos, f"{delta_allele_freqency:.6f}"]))
+                        else:
+                            continue
 
 
 def get_samples_from_file(file: Path) -> list:
