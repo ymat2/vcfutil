@@ -36,27 +36,27 @@ def main(args):
                     tmp_chrom = chrom
                     print(f"\tAnalyzing {tmp_chrom}", file=sys.stderr)
                     chrom2windows[tmp_chrom] = {}
-                    first_idx = ceil((int(pos) - args.window_size) / args.window_step)
+                    first_idx = ceil((int(pos) - args.window_size) / args.window_step) if int(pos) > args.window_size else 0
                     last_idx = ceil(int(pos) / args.window_step)
                     pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
                     pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
                     if (pop1_daf is not None) and (pop2_daf is not None):
-                        for i in range(first_idx, last_idx):
-                            if i not in chrom2windows[tmp_chrom].keys():
-                                chrom2windows[tmp_chrom][i] = [0, 0]  # [number of SNPs, sum of daf]
-                            chrom2windows[tmp_chrom][i][0] += 1
-                            chrom2windows[tmp_chrom][i][1] += abs(pop1_daf - pop2_daf)
+                        for idx in range(first_idx, last_idx):
+                            if idx not in chrom2windows[tmp_chrom].keys():
+                                chrom2windows[tmp_chrom][idx] = [0, 0]  # [number of SNPs, sum of daf]
+                            chrom2windows[tmp_chrom][idx][0] += 1
+                            chrom2windows[tmp_chrom][idx][1] += abs(pop1_daf - pop2_daf)
                 else:
-                    first_idx = ceil((int(pos) - args.window_size) / args.window_step)
+                    first_idx = ceil((int(pos) - args.window_size) / args.window_step) if int(pos) > args.window_size else 0
                     last_idx = ceil(int(pos) / args.window_step)
                     pop1_daf = calc_derived_allele_frequency(fields, pop1_idx)
                     pop2_daf = calc_derived_allele_frequency(fields, pop2_idx)
                     if (pop1_daf is not None) and (pop2_daf is not None):
-                        for i in range(first_idx, last_idx):
-                            if i not in chrom2windows[tmp_chrom].keys():
-                                chrom2windows[tmp_chrom][i] = [0, 0]  # [number of SNPs, sum of daf]
-                            chrom2windows[tmp_chrom][i][0] += 1
-                            chrom2windows[tmp_chrom][i][1] += abs(pop1_daf - pop2_daf)
+                        for idx in range(first_idx, last_idx):
+                            if idx not in chrom2windows[tmp_chrom].keys():
+                                chrom2windows[tmp_chrom][idx] = [0, 0]  # [number of SNPs, sum of daf]
+                            chrom2windows[tmp_chrom][idx][0] += 1
+                            chrom2windows[tmp_chrom][idx][1] += abs(pop1_daf - pop2_daf)
 
     outfile = args.out + ".windowed.daf"
     with open(outfile, "w") as f:
