@@ -16,6 +16,11 @@ def command_daf(args):
         main(args)
 
 
+def command_freq(args):
+    from vcfutil.print_freq import main
+    main(args)
+
+
 def command_dataset(args):
     from vcfutil.dataset import main
     main(args)
@@ -54,9 +59,20 @@ def main():
     parser_daf.add_argument("--window_size", type=int, help="Window size in bp. Cannot be collocated with `--extract`.")
     parser_daf.add_argument("--window_step", type=int, help="Window step in bp. Cannot be collocated with `--extract`.")
     parser_daf.add_argument("--extract_daf", type=float, help="Minimum delta allele frequenciy to be printed. Cannot be collocated with `--window_size`.")
+    parser_daf.add_argument("--extract_freq", type=float, help="Minimum delta allele frequenciy to be printed. Cannot be collocated with `--window_size`.")
     parser_daf.add_argument("--pop1", help="Text file containing the target population. One sample for one line.")
     parser_daf.add_argument("--pop2", help="Text file containing the background population. One sample for one line.")
     parser_daf.set_defaults(handler = command_daf)
+
+    # freq
+    help_txt = "Print allele frequency for each populations."
+    parser_daf = subparsers.add_parser("freq", help=help_txt)
+    parser_daf.add_argument("--vcf", help="VCF file to calculate daf. Can be gziped.")
+    parser_daf.add_argument("--out", help="Prefix of output file.")
+    parser_daf.add_argument("--extract_daf", type=float, help="Minimum delta allele frequenciy to be printed.")
+    parser_daf.add_argument("--pop1", help="Text file containing the target population. One sample for one line.")
+    parser_daf.add_argument("--pop2", help="Text file containing the background population. One sample for one line.")
+    parser_daf.set_defaults(handler = command_freq)
 
     # dataset
     help_txt = "Genetrate simple VCF for example."
