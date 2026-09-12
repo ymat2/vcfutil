@@ -34,7 +34,9 @@ def main(args):
                         if delta_allele_freqency >= args.extract_daf:
                             print("\t".join([chrom, pos, str(pop1_alt_ac), str(pop1_ref_ac), str(pop2_alt_ac), str(pop2_ref_ac)]))
                         else:
-                            continue
+                            print("delta_allele_freqency < args.extract_daf")
+                    else:
+                        print("(pop1_alt_ac + pop1_ref_ac == 0) or (pop2_alt_ac + pop2_ref_ac == 0)")
 
 
 if __name__ == "__main__":
