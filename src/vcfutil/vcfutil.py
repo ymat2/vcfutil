@@ -6,28 +6,22 @@ __version__ = metadata.version("vcfutil")
 
 
 def command_daf(args):
-    if args.window_size and args.extract_daf:
-        raise Exception("`--window_size` and `--extract_daf` cannot be used together.")
-    elif args.window_size:
+    if args.window_size:
+        if not args.window_step:
+            args.window_step = args.window_size
         from vcfutil.calc_wind_daf import main
         main(args)
-    elif args.extract_daf:
-        from vcfutil.extract_high_daf import main
-        main(args)
-
-
-def command_freq(args):
-    from vcfutil.print_freq import main
-    main(args)
+    if args.site is not None or args.site2 is not None:
+        if args.site is not None and args.site2 is not None:
+            raise Exception("Use one of `--site` or `--site2`.")
+        else:
+            from vcfutil.extract_high_daf import main
+            main(args)
 
 
 def command_dataset(args):
     from vcfutil.dataset import main
     main(args)
-
-
-def command_hello(name: str) -> None:
-    print(f"Hello {name}!")
 
 
 def command_version() -> None:
@@ -52,26 +46,17 @@ def main():
     )
 
     # daf
-    help_txt = "Calculate delta allele frequency between populations."
+    help_txt = "Calculate delta allele frequency (DAF) between populations."
     parser_daf = subparsers.add_parser("daf", help=help_txt)
     parser_daf.add_argument("--vcf", help="VCF file to calculate daf. Can be gziped.")
     parser_daf.add_argument("--out", help="Prefix of output file.")
-    parser_daf.add_argument("--window_size", type=int, help="Window size in bp. Cannot be collocated with `--extract`.")
-    parser_daf.add_argument("--window_step", type=int, help="Window step in bp. Cannot be collocated with `--extract`.")
-    parser_daf.add_argument("--extract_daf", type=float, help="Minimum delta derived allele frequenciy to be printed [1, -1]. Cannot be collocated with `--window_size`.")
+    parser_daf.add_argument("--window_size", type=int, help="Window size in bp.")
+    parser_daf.add_argument("--window_step", type=int, help="Window step in bp.")
+    parser_daf.add_argument("--site", type=float, default=None, help="Print site level DAF. Pass minimum DAF to be printed.")
+    parser_daf.add_argument("--site2", type=float, default=None, help="Similar to `--site`. Supress output of allele counts.")
     parser_daf.add_argument("--pop1", help="Text file containing the target population. One sample for one line.")
     parser_daf.add_argument("--pop2", help="Text file containing the background population. One sample for one line.")
     parser_daf.set_defaults(handler = command_daf)
-
-    # freq
-    help_txt = "Print allele frequency for each populations."
-    parser_daf = subparsers.add_parser("freq", help=help_txt)
-    parser_daf.add_argument("--vcf", help="VCF file to calculate daf. Can be gziped.")
-    parser_daf.add_argument("--out", help="Prefix of output file.")
-    parser_daf.add_argument("--extract_daf", type=float, help="Minimum delta derived allele frequenciy to be printed [1, -1].")
-    parser_daf.add_argument("--pop1", help="Text file containing the target population. One sample for one line.")
-    parser_daf.add_argument("--pop2", help="Text file containing the background population. One sample for one line.")
-    parser_daf.set_defaults(handler = command_freq)
 
     # dataset
     help_txt = "Genetrate simple VCF for example."
@@ -82,12 +67,6 @@ def main():
     parser_data.add_argument("--nsamples_per_pop", type=int, help="Number of samples per population. 3 by default.", default=3)
     parser_data.add_argument("--npop", type=int, help="Number of populations. 2 by default.", default=2)
     parser_data.set_defaults(handler = command_dataset)
-
-    # hello
-    help_txt = "Just say hello."
-    parser_hello = subparsers.add_parser("hello", help=help_txt)
-    parser_hello.add_argument("name")
-    parser_hello.set_defaults(handler = command_hello)
 
     # version
     help_txt = "Show the version and exit."

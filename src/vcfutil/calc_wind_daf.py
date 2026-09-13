@@ -55,10 +55,7 @@ def main(args):
                 bin_start = args.window_step * int(idx) + 1
                 bin_end = bin_start + args.window_size - 1
                 n_variants = win[0]
-                if args.window_mean:
-                    mean_daf = f"{win[1]/args.window_size:.3f}"
-                else:
-                    mean_daf = f"{win[1]/win[0]:.3f}"
+                mean_daf = f"{win[1]/win[0]:.3f}"
                 f.write("\t".join([chr, str(bin_start), str(bin_end), str(n_variants), str(mean_daf)])+"\n")
 
 

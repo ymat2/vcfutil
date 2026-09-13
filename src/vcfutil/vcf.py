@@ -55,7 +55,7 @@ def calc_derived_allele_frequency(sample_field: list, pop_idx: list) -> float | 
         daf = sum([GT2AC[gt] for gt in gts_of_pop]) / (2*len(gts_of_pop))
     return daf
 
-def get_allele_frequency(sample_field: list, pop_idx: list) -> tuple[int, int]:
+def get_allele_count(sample_field: list, pop_idx: list) -> tuple[int, int]:
     gts = get_genotypes(sample_field)
     gts_of_pop = [gts[i] for i in pop_idx if gts[i] not in {"./.", ".|."}]
     if len(gts_of_pop) == 0:
